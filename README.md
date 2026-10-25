@@ -1,21 +1,14 @@
-# i.starmobile — Futuristic Smartphone Landing Page Concept
+# i.starmobile — Aurora Edition
 
-Responsive concept website made with semantic HTML, custom CSS and vanilla JavaScript. No build step required: open `index.html` in a modern browser.
-
-## Included
-- Sticky glassmorphism navigation and responsive mobile menu
-- Animated stardust canvas
-- CSS 3D smartphone concept with pointer tilt and keyboard arrow-key controls
-- Processor, display and astrophotography showcase cards
-- Live phone finish customizer: Supernova Silver, Eclipse Black and Cosmic Violet
-- Tech spec snapshot, vision section and newsletter signup demo
-- Keynote placeholder dialog, reveal animations, hover states and reduced-motion support
-
-## Important concept disclaimer
-This is a fictional design concept. A19-Star, 3000-nit display, 36-hour battery target, weight and storage tiers are illustrative and not verified retail product claims. The phone is a CSS 3D illustration, not a true WebGL/GLTF model. Replace the keynote placeholder with a real video when available. Newsletter form is demo-only and does not store or transmit addresses. Add a backend or trusted mailing-list provider before launch. Replace placeholder social/contact links before publishing.
+A separate alternate storefront design for the same mobile and accessories brand. This version uses a bright, premium editorial layout with icy blues, white panels, lavender accents and a mountain-sky hero rather than the original dark neon space look.
 
 ## Files
-- `index.html` — semantic page content
-- `styles.css` — design system, responsive layouts and CSS device artwork
-- `app.js` — interactive phone tilt, finish customizer, particles, menu, dialog and newsletter demo
-- `robots.txt` — basic crawler rules
+- `index.html` — page structure and product listings
+- `styles.css` — responsive styling and CSS 3D-inspired phone art
+- `app.js` — search, cart drawer, add/remove items, mobile menu, newsletter demo and video modal
+
+## Preview
+Open `index.html` in a modern browser. No build step is needed.
+
+## Demo limitations
+Product prices and listings are sample content and should be checked before launch. Checkout, account, wishlist, order tracking, customer support, and newsletter services are placeholders and require backend/service integrations for production. The video button opens a demo modal rather than playing a real video. Google Fonts requires an internet connection.

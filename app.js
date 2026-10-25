@@ -1,21 +1,59 @@
-(() => {
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const menu=document.querySelector('#menu'),nav=document.querySelector('#nav');
-function closeMenu(){nav.classList.remove('open');menu.setAttribute('aria-expanded','false');}
-menu.addEventListener('click',()=>{const open=!nav.classList.contains('open');nav.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));});
-nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));addEventListener('resize',()=>{if(innerWidth>800)closeMenu();});
-const phone=document.querySelector('#phone'),stage=document.querySelector('#phoneStage');
-if(!reduced){stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;phone.style.animationPlayState='paused';phone.style.transform=`rotateY(${-24+x*36}deg) rotateX(${5-y*25}deg) rotateZ(${-7+x*7}deg)`;});stage.addEventListener('pointerleave',()=>{phone.style.animationPlayState='running';phone.style.transform='';});stage.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const d=e.key==='ArrowLeft'?-10:e.key==='ArrowRight'?10:0,v=e.key==='ArrowUp'?-8:e.key==='ArrowDown'?8:0;phone.style.animationPlayState='paused';phone.style.transform=`rotateY(${-24+d}deg) rotateX(${5+v}deg) rotateZ(-7deg)`;});}
-const finishes={silver:['SUPERNOVA SILVER','SV—01','linear-gradient(130deg,#dce1e8,#8e94a4 18%,#333744 41%,#9ea4b1 62%,#292c36)','#8a2be2'],black:['ECLIPSE BLACK','EB—02','linear-gradient(130deg,#626270,#252530 20%,#08080c 47%,#343440 65%,#050506)','#00f0ff'],violet:['COSMIC VIOLET','CV—03','linear-gradient(130deg,#d0b2f5,#7947a9 20%,#30213f 44%,#8d5cb7 65%,#201329)','#a855f7']};
-const custom=document.querySelector('#customPhone'),toast=document.querySelector('#toast');let toastTimer;
-function notify(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),3000);}
-document.querySelectorAll('.color').forEach(btn=>btn.addEventListener('click',()=>{const d=finishes[btn.dataset.color];document.querySelectorAll('.color').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn));});custom.querySelector('.back').style.background=d[2];document.querySelector('#finishName').textContent=d[0];document.querySelector('#finishCode').textContent=d[1];custom.style.filter=`drop-shadow(0 0 22px ${d[3]}25)`;notify(d[0]+' finish selected');}));
-const canvas=document.querySelector('#stars'),ctx=canvas.getContext('2d');let stars=[],w=0,h=0,dpr=1;
-function resize(){dpr=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);stars=Array.from({length:Math.min(130,Math.floor(w*h/9500))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.2+.2,a:Math.random()*.55+.12,p:Math.random()*6,s:Math.random()*.008+.002,c:Math.random()>.88}));draw(0);}
-function draw(t){ctx.clearRect(0,0,w,h);stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.c?`rgba(0,240,255,${reduced?s.a:s.a*(.72+.28*Math.sin(t*s.s+s.p))})`:`rgba(210,210,240,${reduced?s.a:s.a*(.72+.28*Math.sin(t*s.s+s.p))})`;ctx.fill();});if(!reduced)requestAnimationFrame(draw);}
-resize();addEventListener('resize',resize);
-const items=document.querySelectorAll('.reveal');if('IntersectionObserver'in window&&!reduced){const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}}),{threshold:.12});items.forEach(x=>obs.observe(x));}else items.forEach(x=>x.classList.add('visible'));
-const dialog=document.querySelector('#dialog');document.querySelector('#keynote').addEventListener('click',()=>dialog.showModal());document.querySelector('#close').addEventListener('click',()=>dialog.close());document.querySelector('#dismiss').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
-document.querySelector('#newsletter').addEventListener('submit',e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;document.querySelector('#newsStatus').textContent='You’re on the concept list — this demo does not transmit or store your email.';e.currentTarget.reset();notify('Thanks for joining the constellation.');});
-document.querySelector('#year').textContent=new Date().getFullYear();
-})();
+const prices={
+ "iPhone 16 Pro Max":649999,
+ "Samsung Galaxy S24 Ultra":329999,
+ "Xiaomi 14 Ultra":279999,
+ "Oppo Reno11 F":79999,
+ "Realme GT 6":149999,
+ "Wireless Earbuds":9999,
+ "iPhone Case":2499,
+ "Power Bank":6999,
+ "Fast Charger":4999,
+ "Smart Watch":19999
+};
+const cart=[];
+const money=n=>"Rs. "+n.toLocaleString("en-PK");
+const toast=document.getElementById("toast");
+let toastTimer;
+function notify(msg){toast.textContent=msg;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2200);}
+function renderCart(){
+ const count=cart.reduce((sum,x)=>sum+x.qty,0);
+ document.getElementById("cartCount").textContent=count;
+ document.getElementById("drawerCount").textContent=`(${count})`;
+ const items=document.getElementById("cartItems");
+ if(!cart.length)items.innerHTML='<p class="empty-bag">Your bag is empty — let’s find your next favorite.</p>';
+ else items.innerHTML=cart.map((x,i)=>`<div class="cart-line"><div><strong>${x.name}</strong><small>${money(x.price)} × ${x.qty}</small></div><button data-remove="${i}" aria-label="Remove ${x.name}">−</button></div>`).join("");
+ document.getElementById("cartTotal").textContent=money(cart.reduce((sum,x)=>sum+x.price*x.qty,0));
+}
+function add(name){const item=cart.find(x=>x.name===name);if(item)item.qty++;else cart.push({name,price:prices[name]||0,qty:1});renderCart();notify(name+" added to your bag");}
+document.querySelectorAll(".mobile-card,.accessory-card").forEach(card=>{
+ const name=card.dataset.name;
+ const button=card.querySelector(".add");
+ if(button)button.addEventListener("click",()=>add(name));
+});
+document.getElementById("cartItems").addEventListener("click",e=>{const btn=e.target.closest("[data-remove]");if(!btn)return;const i=+btn.dataset.remove;if(cart[i].qty>1)cart[i].qty--;else cart.splice(i,1);renderCart();});
+const drawer=document.getElementById("cartDrawer"),overlay=document.getElementById("overlay");
+function openCart(){drawer.classList.add("open");overlay.classList.add("open");drawer.setAttribute("aria-hidden","false");document.body.classList.add("no-scroll");}
+function closeCart(){drawer.classList.remove("open");overlay.classList.remove("open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("no-scroll");}
+document.getElementById("cartOpen").addEventListener("click",openCart);
+document.getElementById("cartClose").addEventListener("click",closeCart);
+overlay.addEventListener("click",closeCart);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeCart();closeModal();}});
+document.getElementById("checkoutBtn").addEventListener("click",()=>notify(cart.length?"Demo checkout: connect a payment gateway to accept orders.":"Your bag is empty."));
+const search=document.getElementById("searchInput");
+search.addEventListener("input",()=>{
+ const q=search.value.toLowerCase().trim();let matches=0;
+ document.querySelectorAll(".mobile-card,.accessory-card").forEach(card=>{const yes=card.dataset.name.toLowerCase().includes(q);card.style.display=yes?"":"none";if(yes)matches++;});
+ document.getElementById("emptySearch").hidden=matches!==0||q==="";
+});
+const menu=document.querySelector(".menu-toggle"),nav=document.querySelector(".nav");
+menu.addEventListener("click",()=>{const open=nav.classList.toggle("open");menu.setAttribute("aria-expanded",String(open));});
+nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");menu.setAttribute("aria-expanded","false");}));
+document.getElementById("newsletterForm").addEventListener("submit",e=>{e.preventDefault();document.getElementById("newsletterMessage").textContent="Thanks for subscribing! Demo form only.";e.target.reset();});
+const modal=document.getElementById("videoModal");
+function openModal(){modal.classList.add("open");overlay.classList.add("open");}
+function closeModal(){modal.classList.remove("open");if(!drawer.classList.contains("open"))overlay.classList.remove("open");}
+document.getElementById("videoBtn").addEventListener("click",openModal);
+document.getElementById("modalClose").addEventListener("click",closeModal);
+overlay.addEventListener("click",closeModal);
+document.getElementById("helpBtn").addEventListener("click",()=>notify("Need help? Connect your preferred customer support channel here."));
+renderCart();
