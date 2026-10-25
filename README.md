@@ -1,14 +1,14 @@
-# i.starmobile — Aurora Edition
+# i.starmobile — Product Gallery Edition
 
-A separate alternate storefront design for the same mobile and accessories brand. This version uses a bright, premium editorial layout with icy blues, white panels, lavender accents and a mountain-sky hero rather than the original dark neon space look.
+A third, separate visual direction for the same smartphone and accessories storefront. This edition uses warm cream, burnt orange, lilac, pale green and editorial product photography.
 
 ## Files
-- `index.html` — page structure and product listings
-- `styles.css` — responsive styling and CSS 3D-inspired phone art
-- `app.js` — search, cart drawer, add/remove items, mobile menu, newsletter demo and video modal
+- `index.html` — storefront, phone listings, accessory listings and product images
+- `styles.css` — responsive styling and image-led product layout
+- `app.js` — search, category filters, wishlist demo, shopping bag and newsletter demo
 
 ## Preview
-Open `index.html` in a modern browser. No build step is needed.
+Extract the ZIP and open `index.html` in a modern browser. No build step is needed.
 
-## Demo limitations
-Product prices and listings are sample content and should be checked before launch. Checkout, account, wishlist, order tracking, customer support, and newsletter services are placeholders and require backend/service integrations for production. The video button opens a demo modal rather than playing a real video. Google Fonts requires an internet connection.
+## Important
+Product photos are loaded from Unsplash over the internet and therefore require a connection. Images are illustrative product imagery and may not show the exact model or finish listed. All prices and ratings are sample content; verify them before publishing. Checkout, account, order fulfilment and newsletter storage are not connected to a backend yet.
